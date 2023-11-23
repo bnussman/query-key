@@ -2,21 +2,23 @@
 
 ```typescript
 const queries = getQueryKeys({
-  agreements: {
-    queryFn: () => Promise.resolve("agreements"),
-  },
-  avilability: {
-    all: {
-      queryFn: () => Promise.resolve("all"),
+  account: {
+    agreements: {
+      queryFn: () => Promise.resolve("agreements"),
     },
-    paginated: (params: string, filters: number) => ({
-      queryFn: () => Promise.resolve(params),
-      queryKey: [params, filters],
-    }),
-  },
-  info: {
-    queryFn: () => Promise.resolve("info"),
-  },
+    avilability: {
+      all: {
+        queryFn: () => Promise.resolve("all"),
+      },
+      paginated: (params: string, filters: number) => ({
+        queryFn: () => Promise.resolve(params),
+        queryKey: [params, filters],
+      }),
+    },
+    info: {
+      queryFn: () => Promise.resolve("info"),
+    },
+  }
 });
 ```
 
