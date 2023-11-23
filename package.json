@@ -1,12 +1,16 @@
 {
   "name": "query-key",
-  "module": "index.ts",
+  "module": "dist/index.js",
+  "main": "dist/index.cjs",
   "type": "module",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "test": "vitest run"
+    "test": "vitest run",
+    "build": "tsup"
   },
   "devDependencies": {
     "bun-types": "latest",
+    "tsup": "^8.0.1",
     "vitest": "^0.34.6"
   },
   "peerDependencies": {

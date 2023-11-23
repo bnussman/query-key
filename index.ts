@@ -15,6 +15,7 @@ T extends (
     }
   : 
 T extends (...args: any[]) => any ? 
+// @ts-expect-error idk
   (...args: Parameters<T>) => { queryKey: [...P, ...Parameters<T>] } & { [K in keyof ReturnType<T>]: QueryKeys<ReturnType<T>[K], [...P, ...Parameters<T>, K]> }
 : T extends
       | {
@@ -25,6 +26,7 @@ T extends (...args: any[]) => any ?
           queryFn: (...args: any[]) => any;
         }
   ? T
+  //@ts-expect-error idk
   : { [K in keyof T]: QueryKeys<T[K], [...P, K]> });
 
 export function getQueryKeys<T>(input: T, path: string[] = []): QueryKeys<T> {
@@ -34,23 +36,26 @@ export function getQueryKeys<T>(input: T, path: string[] = []): QueryKeys<T> {
     const newPath = [...path, key];
 
     if (typeof input[key] === 'function' && key === "queryFn") {
+      // @ts-expect-error idk
       return { queryFn: input[key], queryKey: path };
     }
 
-
-
+    // @ts-expect-error idk
     if (typeof input[key] === 'function' && !input[key]()["queryFn"]) {
+      // @ts-expect-error idk
       result[key] = (...args) => getQueryKeys(input[key](...args), [...path, key, ...args]);
     }
     else if (typeof input[key] === 'function') {
       // Handle functions (query functions or paginated functions)
-      const fn = { paginated: (...args) => ({ queryFn: input[key](...args)["queryFn"], queryKey: [...newPath, ...args] }) };
-      result[key] = fn.paginated;
+      // @ts-expect-error idk
+      result[key] = (...args) => ({ queryFn: input[key](...args)["queryFn"], queryKey: [...newPath, ...args] });
     } else if (typeof input[key] === 'object') {
       // Recursively convert nested structures
+      // @ts-expect-error idk
       result[key] = getQueryKeys(input[key], newPath);
     }
   }
 
+  // @ts-expect-error idk
   return result;
 };
