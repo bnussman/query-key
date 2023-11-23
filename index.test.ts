@@ -57,3 +57,59 @@ test("should handle object nesting", async () => {
   expectTypeOf(queries.account.info.queryFn).toBeFunction()
   expectTypeOf(queries.account.info).toMatchTypeOf<{ queryFn: () => Promise<string>, queryKey: ["account", "info"] }>()
 });
+
+test("should handle very deep nesting", async () => {
+  const queries = getQueryKeys({
+    linodes: {
+      paginated: (params: string, filters: number) => ({
+        queryFn: () => Promise.resolve(params),
+        queryKey: [params, filters],
+      }),
+      all: {
+        queryFn: () => Promise.resolve("all")
+      },
+      linode: {
+        details: (id: number) => ({
+          queryFn: () => Promise.resolve(id),
+          queryKey: [id],
+        }),
+        volumes: (id: number) => ({
+          queryFn: () => Promise.resolve(id),
+          queryKey: [id],
+        }),
+      }
+    }
+  });
+
+  expect(queries.linodes.paginated("test", 1).queryKey).toStrictEqual(["linodes", "paginated", "test", 1]);
+  expect(queries.linodes.linode.details(1).queryKey).toStrictEqual(["linodes", "linode", "details", 1]);
+  expect(queries.linodes.linode.volumes(1).queryKey).toStrictEqual(["linodes", "linode", "volumes", 1]);
+  expect((await queries.linodes.linode.volumes(1).queryFn())).toEqual(1);
+});
+
+test("should handle very deep nesting", async () => {
+  const queries = getQueryKeys({
+    linodes: {
+      paginated: (params: string, filters: number) => ({
+        queryFn: () => Promise.resolve(params),
+        queryKey: [params, filters],
+      }),
+      all: {
+        queryFn: () => Promise.resolve("all")
+      },
+      linode: (id: number) => ({
+        details: {
+          queryFn: () => Promise.resolve(id),
+        },
+        volumes: {
+          queryFn: () => Promise.resolve(id),
+        },
+      }),
+    }
+  });
+
+  expect(queries.linodes.paginated("test", 1).queryKey).toStrictEqual(["linodes", "paginated", "test", 1]);
+  expect(queries.linodes.linode(1).details).toStrictEqual(["linodes", "linode", "details", 1]);
+  expect(queries.linodes.linode(1).volumes).toStrictEqual(["linodes", "linode", "volumes", 1]);
+  expect((await queries.linodes.linode(1).volumes.queryFn())).toEqual(1);
+});
