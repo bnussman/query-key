@@ -33,10 +33,8 @@ export function getQueryKeys<T>(input: T, path: string[] = []): QueryKeys<T> {
       return { queryFn: input[key], queryKey: path };
     }
 
-
     if (typeof input[key] === 'function') {
       // Handle functions (query functions or paginated functions)
-      console.log(input[key])
       const fn = { paginated: (...args) => ({ queryFn: input[key](...args)["queryFn"], queryKey: [...newPath, ...args] }) };
       result[key] = fn.paginated;
     } else if (typeof input[key] === 'object') {

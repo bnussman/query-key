@@ -1,15 +1,49 @@
 # query-key
 
-To install dependencies:
-
-```bash
-bun install
+```typescript
+const queries = getQueryKeys({
+  agreements: {
+    queryFn: () => Promise.resolve("agreements"),
+  },
+  avilability: {
+    all: {
+      queryFn: () => Promise.resolve("all"),
+    },
+    paginated: (params: string, filters: number) => ({
+      queryFn: () => Promise.resolve(params),
+      queryKey: [params, filters],
+    }),
+  },
+  info: {
+    queryFn: () => Promise.resolve("info"),
+  },
+});
 ```
 
-To run:
-
-```bash
-bun run index.ts
+```typescript
+{
+  queryKey: [],
+  account: {
+    queryKey: ["account"],
+    agreements: {
+      queryKey: ["account", "agreements"]
+      queryFn: () => Promise.resolve("agreements"),
+    },
+    info: {
+      queryKey: ["account", "info"],
+      queryFn: () => Promise.resolve("info")
+    }
+    avilability: {
+      queryKey: ["account", "avilability"],
+      all: {
+        queryKey: ["account", "avilability", "all"] 
+        queryFn: () => Promise.resolve("all")
+      },
+      paginated: (params: string, filters: number) => ({
+        queryFn: () => Promise.resolve(params),
+        queryKey: ["account", "avilability", "paginated", params, filters],
+      })
+    },
+  }
+}
 ```
-
-This project was created using `bun init` in bun v1.0.13. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
