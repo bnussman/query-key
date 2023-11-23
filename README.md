@@ -1,5 +1,10 @@
 # query-key
 
+> [!Warning]
+> This package is a work in progress
+
+Similar to https://github.com/lukemorales/query-key-factory but actually allows nesting
+
 ```typescript
 const queries = getQueryKeys({
   account: {
