@@ -137,3 +137,49 @@ test("should handle nesting function", async () => {
 
   expect(queries.linodes.linode(1).volumes("test").events.queryKey).toStrictEqual(["linodes", "linode", 1, "volumes", "test", "events"]);
 });
+
+
+test("should be mergeable", async () => {
+  const linodes = getQueryKeys({
+    linodes: {
+      linode: (id: number) => ({
+        details: {
+          queryFn: () => Promise.resolve(id),
+        },
+        volumes: (label: string) => ({
+          details: {
+            queryFn: () => Promise.resolve(id),
+          },
+          events: {
+            queryFn: () => Promise.resolve(id),
+          },
+        }),
+      }),
+    }
+  });
+
+  const account = getQueryKeys({
+    account: {
+      agreements: {
+        queryFn: () => Promise.resolve("agreements"),
+      },
+      avilability: {
+        all: {
+          queryFn: () => Promise.resolve("all"),
+        },
+        paginated: (params: string, filters: number) => ({
+          queryFn: () => Promise.resolve(params),
+          queryKey: [params, filters],
+        }),
+      },
+      info: {
+        queryFn: () => Promise.resolve("info"),
+      },
+    }
+  });
+
+  const queries = { ...account, ...linodes };
+
+  expect(queries.linodes.linode(1).volumes("test").events.queryKey).toStrictEqual(["linodes", "linode", 1, "volumes", "test", "events"]);
+  expect(queries.account.avilability.all.queryKey).toStrictEqual(["account", "avilability", "all"]);
+});
