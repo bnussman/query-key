@@ -1,0 +1,12 @@
+{
+  "name": "query-key",
+  "module": "index.ts",
+  "type": "module",
+  "devDependencies": {
+    "bun-types": "latest",
+    "vitest": "^0.34.6"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}
