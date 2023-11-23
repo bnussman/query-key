@@ -109,7 +109,31 @@ test("should handle very deep nesting", async () => {
   });
 
   expect(queries.linodes.paginated("test", 1).queryKey).toStrictEqual(["linodes", "paginated", "test", 1]);
-  expect(queries.linodes.linode(1).details).toStrictEqual(["linodes", "linode", 1, "details"]);
-  expect(queries.linodes.linode(1).volumes).toStrictEqual(["linodes", "linode", 1, "volumes"]);
+  expect((await queries.linodes.paginated("test", 1).queryFn())).toStrictEqual("test");
+  expect(queries.linodes.linode(1).details.queryKey).toStrictEqual(["linodes", "linode", 1, "details"]);
+  expect(queries.linodes.linode(1).volumes.queryKey).toStrictEqual(["linodes", "linode", 1, "volumes"]);
   expect((await queries.linodes.linode(1).volumes.queryFn())).toEqual(1);
+});
+
+
+test("should handle nesting function", async () => {
+  const queries = getQueryKeys({
+    linodes: {
+      linode: (id: number) => ({
+        details: {
+          queryFn: () => Promise.resolve(id),
+        },
+        volumes: (label: string) => ({
+          details: {
+            queryFn: () => Promise.resolve(id),
+          },
+          events: {
+            queryFn: () => Promise.resolve(id),
+          },
+        }),
+      }),
+    }
+  });
+
+  expect(queries.linodes.linode(1).volumes("test").events.queryKey).toStrictEqual(["linodes", "linode", 1, "volumes", "test", "events"]);
 });

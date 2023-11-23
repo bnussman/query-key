@@ -38,7 +38,11 @@ export function getQueryKeys<T>(input: T, path: string[] = []): QueryKeys<T> {
     }
 
 
-    if (typeof input[key] === 'function') {
+
+    if (typeof input[key] === 'function' && !input[key]()["queryFn"]) {
+      result[key] = (...args) => getQueryKeys(input[key](...args), [...path, key, ...args]);
+    }
+    else if (typeof input[key] === 'function') {
       // Handle functions (query functions or paginated functions)
       const fn = { paginated: (...args) => ({ queryFn: input[key](...args)["queryFn"], queryKey: [...newPath, ...args] }) };
       result[key] = fn.paginated;
