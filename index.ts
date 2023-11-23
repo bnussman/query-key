@@ -1,6 +1,7 @@
 type QueryKeys<T, P extends string[] = []> = {
   queryKey: [...P];
-} & (T extends (
+} & (
+T extends (
   ...args: any[]
 ) => {
   queryFn: (...args: any[]) => any;
@@ -12,7 +13,10 @@ type QueryKeys<T, P extends string[] = []> = {
       queryFn: ReturnType<T>['queryFn'];
       queryKey: [...P, ...Parameters<T>];
     }
-  : T extends
+  : 
+T extends (...args: any[]) => any ? 
+  (...args: Parameters<T>) => { queryKey: [...P, ...Parameters<T>] } & { [K in keyof ReturnType<T>]: QueryKeys<ReturnType<T>[K], [...P, ...Parameters<T>, K]> }
+: T extends
       | {
           queryFn: (...args: any[]) => any;
           queryKey: any[];
@@ -32,6 +36,7 @@ export function getQueryKeys<T>(input: T, path: string[] = []): QueryKeys<T> {
     if (typeof input[key] === 'function' && key === "queryFn") {
       return { queryFn: input[key], queryKey: path };
     }
+
 
     if (typeof input[key] === 'function') {
       // Handle functions (query functions or paginated functions)

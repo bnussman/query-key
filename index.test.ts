@@ -109,7 +109,7 @@ test("should handle very deep nesting", async () => {
   });
 
   expect(queries.linodes.paginated("test", 1).queryKey).toStrictEqual(["linodes", "paginated", "test", 1]);
-  expect(queries.linodes.linode(1).details).toStrictEqual(["linodes", "linode", "details", 1]);
-  expect(queries.linodes.linode(1).volumes).toStrictEqual(["linodes", "linode", "volumes", 1]);
+  expect(queries.linodes.linode(1).details).toStrictEqual(["linodes", "linode", 1, "details"]);
+  expect(queries.linodes.linode(1).volumes).toStrictEqual(["linodes", "linode", 1, "volumes"]);
   expect((await queries.linodes.linode(1).volumes.queryFn())).toEqual(1);
 });
