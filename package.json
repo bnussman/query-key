@@ -4,7 +4,15 @@
   "main": "dist/index.cjs",
   "type": "module",
   "types": "dist/index.d.ts",
+  "author": "Banks Nussman",
   "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bnussman/query-key.git"
+  },
+  "bugs": {
+    "url": "https://github.com/bnussman/query-key/issues"
+  },
   "private": false,
   "files": ["dist"],
   "scripts": {
