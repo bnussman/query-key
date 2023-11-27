@@ -139,6 +139,16 @@ test("should handle nesting function", async () => {
   expect(queries.linodes.linode(1).volumes("test").events.queryKey).toStrictEqual(["linodes", "linode", 1, "volumes", "test", "events"]);
 });
 
+test("should handle function params", async () => {
+  const queries = getQueryKeys({
+    linode: (id: string) => ({
+      queryFn: () => Promise.resolve(id),
+    }),
+  });
+
+  expect((await queries.linode("test").queryFn() )).toBe("test");
+})
+
 
 test("should be mergeable", async () => {
   const linodes = getQueryKeys({
