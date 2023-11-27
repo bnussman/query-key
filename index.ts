@@ -10,7 +10,7 @@ T extends (
   ? (
       ...args: Parameters<T>
     ) => {
-      queryFn: ReturnType<T>['queryFn'];
+      queryFn: () => ReturnType<T>['queryFn'];
       queryKey: [...P, ...Parameters<T>];
     }
   : 
