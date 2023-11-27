@@ -1,5 +1,5 @@
 {
-  "name": "query-key",
+  "name": "@banksnussman/query-key",
   "module": "dist/index.js",
   "main": "dist/index.cjs",
   "type": "module",
