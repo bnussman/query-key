@@ -42,6 +42,11 @@ jobs:
         run: bun install
       - name: Test
         run: bun run build
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: dist
+          path: dist/
   publish:
     name: Publish to NPM
     needs: ["build"]
