@@ -47,7 +47,7 @@ jobs:
         with:
           name: dist
           path: dist/
-  publish:
+  npm:
     name: Publish to NPM
     needs: ["build"]
     runs-on: ubuntu-latest
@@ -68,6 +68,20 @@ jobs:
         run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+  github:
+    name: Publish to Github
+    needs: ["build"]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          node-version: latest
+      - name: Download artifacts
+        uses: actions/download-artifact@v3
+        with:
+          name: dist
+          path: dist/
       - uses: actions/setup-node@v3
         with:
           registry-url: "https://npm.pkg.github.com"
