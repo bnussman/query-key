@@ -137,6 +137,7 @@ test("should handle nesting function", async () => {
   });
 
   expect(queries.linodes.linode(1).volumes("test").events.queryKey).toStrictEqual(["linodes", "linode", 1, "volumes", "test", "events"]);
+  expect(queries.linodes.linode(1).volumes("test").queryKey).toStrictEqual(["linodes", "linode", 1, "volumes", "test"]);
 });
 
 test("should handle function params", async () => {
