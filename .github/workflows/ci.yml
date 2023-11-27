@@ -81,6 +81,6 @@ jobs:
           registry-url: "https://npm.pkg.github.com"
       - name: Publish to Github Package Repository
         continue-on-error: true
-        run: npm publish --registry https://npm.pkg.github.com/@banksnussman --scope=@banksnussman --access publi
+        run: npm publish --registry https://npm.pkg.github.com/bnussman --scope=@banksnussman --access publi
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
