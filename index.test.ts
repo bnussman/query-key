@@ -21,6 +21,7 @@ test("should handle functions", async () => {
   });
 
   expect(queries.avilability.paginated("test", 1).queryKey).toStrictEqual(["avilability", "paginated", "test", 1]);
+  expect(queries.avilability.paginated.queryKey).toStrictEqual(["avilability", "paginated"]);
   expect((await queries.avilability.paginated("test", 1).queryFn())).toEqual("test");
 
   expectTypeOf(queries.info.queryFn).toBeFunction()

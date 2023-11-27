@@ -48,7 +48,10 @@ export function getQueryKeys<T>(input: T, path: string[] = []): QueryKeys<T> {
     else if (typeof input[key] === 'function') {
       // Handle functions (query functions or paginated functions)
       // @ts-expect-error idk
-      result[key] = (...args) => ({ queryFn: input[key](...args)["queryFn"], queryKey: [...newPath, ...args] });
+      const fn = (...args) => ({ queryFn: input[key](...args)["queryFn"], queryKey: [...newPath, ...args] });
+      fn.queryKey = newPath;
+      // @ts-expect-error idk
+      result[key] = fn;
     } else if (typeof input[key] === 'object') {
       // Recursively convert nested structures
       // @ts-expect-error idk
