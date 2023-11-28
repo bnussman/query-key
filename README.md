@@ -12,51 +12,45 @@ This package is inspired by and is similar to [`@lukemorales/query-key-factory`]
 ## Usage
 
 ```typescript
-const queries = getQueryKeys({
-  account: {
-    agreements: {
-      queryFn: () => Promise.resolve("agreements"),
-    },
-    availability: {
-      all: {
-        queryFn: () => Promise.resolve("all"),
-      },
-      paginated: (params: string, filters: number) => ({
-        queryFn: () => Promise.resolve(params),
-        queryKey: [params, filters],
-      }),
-    },
-    info: {
-      queryFn: () => Promise.resolve("info"),
-    },
-  }
-});
-```
+import { getQueryKeys } from '@bnussman/query-key';
+import { useQuery } from '@tanstack/react-query';
 
-```typescript
-{
-  queryKey: [],
-  account: {
-    queryKey: ["account"],
-    agreements: {
-      queryKey: ["account", "agreements"]
-      queryFn: () => Promise.resolve("agreements"),
-    },
-    info: {
-      queryKey: ["account", "info"],
-      queryFn: () => Promise.resolve("info")
+const queries = getQueryKeys({
+  users: {
+    paginated: (params: Params = {}, filter: Filter = {}) => ({
+      queryFn: () => getUsers(params, filter)
+    }),
+    user: (id: string) => ({
+      queryFn: () => getUser(id)
+    }),
+    all: {
+      queryFn: getAllUsers
     }
-    availability: {
-      queryKey: ["account", "availability"],
-      all: {
-        queryKey: ["account", "availability", "all"] 
-        queryFn: () => Promise.resolve("all")
-      },
-      paginated: (params: string, filters: number) => ({
-        queryFn: () => Promise.resolve(params),
-        queryKey: ["account", "availability", "paginated", params, filters],
-      })
+  },
+});
+
+const useUsersQuery = (params: Params, filter: Filter) => 
+  useQuery<Page<User>, APIError[]>(queries.users.paginated(params, filter));
+
+const useUserQuery = (id: string, enabled = true) => 
+  useQuery<User, APIError[]>({
+    ...queries.users.user(id),
+    enabled,
+  });
+
+const useAllUsersQuery = (params: Params, filter: Filter) => 
+  useQuery<User[], APIError[]>(queries.users.all);
+
+const useUserMutation = (id: string) => {
+  const queryClient = useQueryClient();
+
+  return useMutation<User, APIError[], Partial<User>>({
+    mutationFn: (data) => updateUser(id, data),
+    onSuccess: (user) => {
+      queryClient.setQueryData(queries.users.user(id).queryKey, user);
+      queryClient.invalidateQueries(queries.users.paginated.queryKey);
+      queryClient.invalidateQueries(queries.users.all.queryKey);
     },
-  }
-}
+  });
+};
 ```
