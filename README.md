@@ -11,7 +11,7 @@ const queries = getQueryKeys({
     agreements: {
       queryFn: () => Promise.resolve("agreements"),
     },
-    avilability: {
+    availability: {
       all: {
         queryFn: () => Promise.resolve("all"),
       },
@@ -40,15 +40,15 @@ const queries = getQueryKeys({
       queryKey: ["account", "info"],
       queryFn: () => Promise.resolve("info")
     }
-    avilability: {
-      queryKey: ["account", "avilability"],
+    availability: {
+      queryKey: ["account", "availability"],
       all: {
-        queryKey: ["account", "avilability", "all"] 
+        queryKey: ["account", "availability", "all"] 
         queryFn: () => Promise.resolve("all")
       },
       paginated: (params: string, filters: number) => ({
         queryFn: () => Promise.resolve(params),
-        queryKey: ["account", "avilability", "paginated", params, filters],
+        queryKey: ["account", "availability", "paginated", params, filters],
       })
     },
   }
