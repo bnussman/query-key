@@ -1,9 +1,13 @@
 # query-key
 
-> [!Warning]
-> This package is a work in progress
+A simple package to help you construct typesafe query keys for [`@tanstack/react-query`](https://tanstack.com/query).
 
-Similar to https://github.com/lukemorales/query-key-factory but actually allows nesting
+This package is inspired by and is similar to [@lukemorales/query-key-factory](https://github.com/lukemorales/query-key-factory), but allows you to nest queries.
+
+## 🚀 Main Features
+- Generates typesafe query keys based on an object's shape
+- Tightly couples queryKey and queryFn based on [this](https://twitter.com/TkDodo/status/1724082589068075450) reccomendation
+- Allows infinite nesting
 
 ```typescript
 const queries = getQueryKeys({
