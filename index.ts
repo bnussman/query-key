@@ -5,7 +5,6 @@ T extends (
   ...args: any[]
 ) => {
   queryFn: (...args: any[]) => any;
-  queryKey: any[];
 }
   ? (
       ...args: Parameters<T>
