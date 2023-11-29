@@ -154,8 +154,7 @@ test("should handle function params", async () => {
   });
 
   expect((await queries.linode("test").queryFn() )).toBe("test");
-})
-
+});
 
 test("should be mergeable", async () => {
   const linodes = getQueryKeys({
@@ -200,4 +199,20 @@ test("should be mergeable", async () => {
 
   expect(queries.linodes.linode(1).volumes("test").events.queryKey).toStrictEqual(["linodes", "linode", 1, "volumes", "test", "events"]);
   expect(queries.account.avilability.all.queryKey).toStrictEqual(["account", "avilability", "all"]);
+});
+
+test("can passthrough options", async () => {
+  const queries = getQueryKeys({
+    linode: (id: string) => ({
+      queryFn: () => Promise.resolve(id),
+      enabled: true
+    }),
+    volumes: {
+      queryFn: () => Promise.resolve(1),
+      onSuccess: () => true
+    }
+  });
+
+  expect(queries.linode("test").enabled).toBe(true);
+  expect(queries.volumes.onSuccess()).toBe(true);
 });

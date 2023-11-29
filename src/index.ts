@@ -8,7 +8,7 @@ T extends (
 }
   ? (
       ...args: Parameters<T>
-    ) => {
+    ) => Omit<ReturnType<T>, 'queryFn' | 'queryKey'> & {
       queryFn: () => ReturnType<ReturnType<T>['queryFn']>;
       queryKey: [...P, ...Parameters<T>];
     }
@@ -36,7 +36,7 @@ export function getQueryKeys<T>(input: T, path: string[] = []): QueryKeys<T> {
 
     if (typeof input[key] === 'function' && key === "queryFn") {
       // @ts-expect-error todo
-      return { queryFn: input[key], queryKey: path };
+      return { ...input, queryFn: input[key], queryKey: path };
     }
 
     // @ts-expect-error todo
@@ -47,7 +47,7 @@ export function getQueryKeys<T>(input: T, path: string[] = []): QueryKeys<T> {
     else if (typeof input[key] === 'function') {
       // Handle functions (query functions or paginated functions)
       // @ts-expect-error todo
-      const fn = (...args) => ({ queryFn: input[key](...args)["queryFn"], queryKey: [...newPath, ...args] });
+      const fn = (...args) => ({ ...input[key](...args), queryFn: input[key](...args)["queryFn"], queryKey: [...newPath, ...args]  });
       fn.queryKey = newPath;
       // @ts-expect-error todo
       result[key] = fn;
