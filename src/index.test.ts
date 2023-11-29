@@ -135,9 +135,14 @@ test("should handle nesting function", async () => {
             queryFn: () => Promise.resolve(id),
           },
           events: {
-            queryFn: () => Promise.resolve(id),
+            queryFn: () => Promise.resolve({ id, label }),
             enabled: true,
           },
+          notifications: (type: 'read' | 'unread') => ({
+            queryFn: () => Promise.resolve({ id, label, type }),
+            enabled: true,
+            queryKey: [type],
+          }),
         }),
       }),
     }
@@ -146,6 +151,11 @@ test("should handle nesting function", async () => {
   expect(queries.linodes.linode(1).volumes("test").events.queryKey).toStrictEqual(["linodes", "linode", 1, "volumes", "test", "events"]);
   expect(queries.linodes.linode(1).volumes("test").queryKey).toStrictEqual(["linodes", "linode", 1, "volumes", "test"]);
   expect(queries.linodes.linode(1).volumes("test").events.enabled).toStrictEqual(true);
+  expect((await queries.linodes.linode(1).volumes("test").events.queryFn())).toStrictEqual({ id: 1, label: "test" });
+
+  // Check 3 functions deep
+  expect(queries.linodes.linode(1).volumes("test").notifications('read').queryKey).toStrictEqual(["linodes", "linode", 1, "volumes", "test", "notifications", 'read']);
+  expect((await queries.linodes.linode(1).volumes("test").notifications('unread').queryFn())).toStrictEqual({ id: 1, label: "test", type: 'unread' });
 });
 
 test("should handle function params", async () => {
