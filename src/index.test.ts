@@ -18,6 +18,9 @@ test("should handle functions", async () => {
     info: {
       queryFn: () => Promise.resolve("info"),
     },
+    details: (id: number, label: string) => ({
+      queryFn: () => Promise.resolve({ id, label }),
+    }),
   });
 
   expect(queries.avilability.paginated("test", 1).queryKey).toStrictEqual(["avilability", "paginated", "test", 1]);
@@ -26,6 +29,12 @@ test("should handle functions", async () => {
 
   expectTypeOf(queries.info.queryFn).toBeFunction()
   expectTypeOf(queries.info).toMatchTypeOf<{ queryFn: () => Promise<string>, queryKey: ["info"] }>()
+
+  expectTypeOf(queries.details).toBeFunction()
+  expectTypeOf(queries.details(1, "test").queryFn).toBeFunction()
+  expect((await queries.details(1, "test").queryFn())).toEqual({ id: 1, label: "test" });
+  expect(queries.details(1, "test").queryKey).toEqual(["details", 1, "test"]);
+  expectTypeOf(queries.details(1, "test")).toMatchTypeOf<{ queryFn: () => Promise<{ id: number, label: string }>, queryKey: ["details", number, string] }>()
 });
 
 test("should handle object nesting", async () => {
@@ -48,9 +57,6 @@ test("should handle object nesting", async () => {
       },
     }
   });
-
-  console.log(JSON.stringify(queries, null, 2))
-  console.log(queries)
 
   expect(queries.account.avilability.paginated("test", 1).queryKey).toStrictEqual(["account", "avilability", "paginated", "test", 1]);
   expect((await queries.account.avilability.paginated("test", 1).queryFn())).toEqual("test");
