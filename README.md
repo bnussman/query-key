@@ -18,7 +18,8 @@ import { useQuery } from '@tanstack/react-query';
 const queries = getQueryKeys({
   users: {
     paginated: (params: Params = {}, filter: Filter = {}) => ({
-      queryFn: () => getUsers(params, filter)
+      queryFn: () => getUsers(params, filter),
+      queryKey: [params, filter]
     }),
     user: (id: string) => ({
       queryFn: () => getUser(id)
