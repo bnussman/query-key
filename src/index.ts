@@ -1,4 +1,4 @@
-type QueryKeys<T, P extends string[] = []> = {
+type QueryKeys<T, P extends unknown[] = []> = {
   queryKey: [...P];
 } & (T extends (...args: any[]) => {
   queryFn: (...args: any[]) => any;
@@ -8,7 +8,7 @@ type QueryKeys<T, P extends string[] = []> = {
       queryKey: [...P, ...Parameters<T>];
     }
   : T extends (...args: any[]) => any
-    ? // @ts-expect-error todo
+    ? 
       (
         ...args: Parameters<T>
       ) => { queryKey: [...P, ...Parameters<T>] } & {
@@ -26,7 +26,7 @@ type QueryKeys<T, P extends string[] = []> = {
               queryFn: (...args: any[]) => any;
             }
       ? T
-      : //@ts-expect-error todo
+      :
         { [K in keyof T]: QueryKeys<T[K], [...P, K]> });
 
 export function getQueryKeys<T>(input: T, path: string[] = []): QueryKeys<T> {
@@ -44,12 +44,15 @@ export function getQueryKeys<T>(input: T, path: string[] = []): QueryKeys<T> {
     if (typeof input[key] === "function" && !input[key]()["queryFn"]) {
       // @ts-expect-error todo
       result[key] = (...args) =>
+        // @ts-expect-error todo
         getQueryKeys(input[key](...args), [...path, key, ...args]);
     } else if (typeof input[key] === "function") {
       // Handle functions (query functions or paginated functions)
       // @ts-expect-error todo
       const fn = (...args) => ({
+      // @ts-expect-error todo
         ...input[key](...args),
+      // @ts-expect-error todo
         queryFn: input[key](...args)["queryFn"],
         queryKey: [...newPath, ...args],
       });
