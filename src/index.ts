@@ -8,10 +8,7 @@ type QueryKeys<T, P extends unknown[] = []> = {
       queryKey: [...P, ...Parameters<T>];
     }
   : T extends (...args: any[]) => any
-    ? 
-      (
-        ...args: Parameters<T>
-      ) => { queryKey: [...P, ...Parameters<T>] } & {
+    ? (...args: Parameters<T>) => { queryKey: [...P, ...Parameters<T>] } & {
         [K in keyof ReturnType<T>]: QueryKeys<
           ReturnType<T>[K],
           [...P, ...Parameters<T>, K]
@@ -26,10 +23,21 @@ type QueryKeys<T, P extends unknown[] = []> = {
               queryFn: (...args: any[]) => any;
             }
       ? T
-      :
-        { [K in keyof T]: QueryKeys<T[K], [...P, K]> });
+      : { [K in keyof T]: QueryKeys<T[K], [...P, K]> });
 
-export function getQueryKeys<T>(input: T, path: string[] = []): QueryKeys<T> {
+type QueryDef = { queryFn: (...args: any[]) => any; queryKey?: unknown[] };
+
+type FactoryDef = {
+  [key: string]:
+    | QueryDef
+    | ((...params: any) => QueryDef | FactoryDef)
+    | FactoryDef;
+};
+
+export function getQueryKeys<T extends FactoryDef>(
+  input: T,
+  path: string[] = [],
+): QueryKeys<T> {
   const result = { queryKey: path };
 
   for (const key in input) {
@@ -50,9 +58,9 @@ export function getQueryKeys<T>(input: T, path: string[] = []): QueryKeys<T> {
       // Handle functions (query functions or paginated functions)
       // @ts-expect-error todo
       const fn = (...args) => ({
-      // @ts-expect-error todo
+        // @ts-expect-error todo
         ...input[key](...args),
-      // @ts-expect-error todo
+        // @ts-expect-error todo
         queryFn: input[key](...args)["queryFn"],
         queryKey: [...newPath, ...args],
       });

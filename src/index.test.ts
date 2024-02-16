@@ -3,9 +3,7 @@ import { getQueryKeys } from ".";
 
 test("should handle functions", async () => {
   const queries = getQueryKeys({
-    agreements: {
-      queryFn: () => Promise.resolve("agreements"),
-    },
+    agreements: {},
     avilability: {
       all: {
         queryFn: () => Promise.resolve("all"),
